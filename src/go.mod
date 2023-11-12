@@ -1,4 +1,4 @@
-module parmake
+module dismake
 
 go 1.21.3
 
