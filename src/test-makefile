@@ -4,7 +4,9 @@
 # @file
 # @version 0.1
 
-test.txt      :test0.txt
+test.txt      :test0.txt test1.txt
 	touch test.txt
 
+xd.txt      :xd0.txt xd1.txt
+	touch xd.txt
 # end

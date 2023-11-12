@@ -8,9 +8,11 @@ import (
 )
 
 func check(e error) {
-
-
+	if e != nil {
+		panic("panicking");
+	}
 }
+
 func main() {
 	if len(os.Args) != 2 {
 		panic("only one argument pls :(")
@@ -36,7 +38,8 @@ func main() {
 	interpreter.input = string(body)
 	interpreter.evaluationFailed = false
 
-	yyParse(&interpreter)
+	cont := yyParse(&interpreter)
+	fmt.Println(cont)
 	// }
 }
 
