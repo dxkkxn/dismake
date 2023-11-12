@@ -4,8 +4,8 @@
 #+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
 #+OPTIONS: timestamp:t title:t toc:t todo:t |:t
 #+TITLE: CAHIER_DE_LABORATOIRE
-#+DATE: <2018-10-09 mar.>
-#+AUTHOR: VOTRE ÉQUIPE
+#+DATE: <2023-11-12 mar.>
+#+AUTHOR: Youssef BENJELLOUN EL KBIBI
 #+EMAIL: 
 #+LANGUAGE: fr
 #+SELECT_TAGS: export
@@ -14,6 +14,8 @@
 
 * Gestion du code
 ** URL du gitlab de l'équipe
+https://gitlab.ensimag.fr/benjelly/distrib-make
+
 * Déployement dans Grid 5000
 * Expérimentations
 * Fabrication des courbes de performances
