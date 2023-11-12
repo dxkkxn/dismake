@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"os/exec"
 )
 
 func check(e error) {
 	if e != nil {
+		fmt.Println(e);
 		panic("panicking");
 	}
 }
@@ -20,27 +22,33 @@ func main() {
 	body, err := os.ReadFile(file)
 	check(err)
 
-	// reader := bufio.NewReader(os.Stdin)
-	// yyErrorVerbose = true
 	interpreter := interpreter{}
-
-
-	// for {
-	// 	fmt.Print("> ")
-
-	// 	input, err := reader.ReadString('\n')
-	// 	if err != nil {
-	// 		fmt.Println("Bye.")
-	// 		return
-	// 	}
 
 	interpreter.input = string(body)
 	interpreter.evaluationFailed = false
 
-	cont := yyParse(&interpreter)
-	fmt.Println(cont)
-	// }
+	yyParse(&interpreter)
+	rulesMap := make(map[string]rule);
+	for _, rule := range(allRules){
+		rulesMap[rule.target] = rule
+	}
+	mainTarget := allRules[len(allRules) - 1].target
+	execMakeSeq(mainTarget, rulesMap)
 }
+
+func execMakeSeq(target string, graph map[string]rule) {
+	for _, req := range(graph[target].requisites) {
+		execMakeSeq(req, graph)
+	}
+	cmd := exec.Command("bash", "-c", graph[target].cmd)
+	stdout, err := cmd.Output()
+	check(err)
+	fmt.Println(graph[target].cmd)
+	if len(stdout) != 0 {
+		fmt.Println(stdout)
+	}
+}
+
 
 const EOF = 0
 

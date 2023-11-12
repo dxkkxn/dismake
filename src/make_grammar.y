@@ -1,8 +1,5 @@
 %{
 package main
-import (
-	"fmt"
-    )
 
 var filesSlice []string
 var allRules []rule
@@ -31,8 +28,7 @@ RuleSlice []rule
 %type<RuleSlice> expr start
 
 %%
-start: expr { $$ = $1
-         fmt.Println($1) }
+start: expr { $$ = $1 }
 
 expr :
         target cmd expr {
