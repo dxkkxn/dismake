@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"io/ioutil"
 )
 
 func check(e error) {
@@ -18,7 +17,7 @@ func main() {
 		panic("only one argument pls :(")
 	}
 	var file string = os.Args[1]
-	body, err := ioutil.ReadFile(file)
+	body, err := os.ReadFile(file)
 	check(err)
 
 	// reader := bufio.NewReader(os.Stdin)
