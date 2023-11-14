@@ -24,6 +24,7 @@ import (
 	"flag"
 	"log"
 	"time"
+	"math"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -39,6 +40,28 @@ var (
 	name = flag.String("name", defaultName, "Name to greet")
 )
 
+func mean(values [32]int64) float64 {
+	var sum float64 = 0
+	for i := 1; i < 32; i++ {
+		sum += float64(values[i])
+	}
+	return sum/32
+}
+
+func standardDeviation(values [32]int64, mean float64) float64{
+	var sum float64 = 0
+	for i := 1; i < 32; i++ {
+		sum += math.Pow(float64(values[i]) - mean, 2)
+	}
+	return math.Sqrt(sum/31)
+}
+
+func confidenceInterval(mean float64, stdDev float64,  size float64, confidenceLevel float64) (time.Duration, time.Duration) {
+	c := 0.95 * (stdDev / math.Sqrt(size))
+	return time.Duration(mean - c), time.Duration(mean + c)
+}
+
+
 func main() {
 	flag.Parse()
 	// Set up a connection to the server.
@@ -52,13 +75,20 @@ func main() {
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-
-	for true {
+	var values [32]int64;
+	for i := 0; i < 32; i++ {
 		log.Println("[client] sending ping")
-		_, err := c.Pong(ctx, &pb.PingRequest{})
+		start := time.Now()
+		_, err = c.Pong(ctx, &pb.PingRequest{})
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
+		values[i] = int64(time.Since(start))
 		log.Printf("[client] received pong")
+		log.Printf("[client] time elapsed %v", time.Since(start))
 	}
+	meanVal := mean(values)
+	stdDev := standardDeviation(values, meanVal)
+	log.Println(confidenceInterval(meanVal, stdDev, 31, 0.95))
+
 }
