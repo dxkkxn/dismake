@@ -25,6 +25,7 @@ import (
 	"log"
 	"time"
 	"math"
+	"strings"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -61,6 +62,15 @@ func confidenceInterval(mean float64, stdDev float64,  size float64, confidenceL
 	return time.Duration(mean - c), time.Duration(mean + c)
 }
 
+func longString() string {
+    // Using strings.Builder for efficient string concatenation
+    var builder strings.Builder
+	for i := 0; i < 10000; i++ {
+		builder.WriteString("Hello Go!")
+	}
+    result := builder.String()
+	return result
+}
 
 func main() {
 	flag.Parse()
@@ -87,8 +97,26 @@ func main() {
 		log.Printf("[client] received pong")
 		log.Printf("[client] time elapsed %v", time.Since(start))
 	}
+	// Confidence interval computation
 	meanVal := mean(values)
 	stdDev := standardDeviation(values, meanVal)
-	log.Println(confidenceInterval(meanVal, stdDev, 31, 0.95))
+	min_ci, max_ci := confidenceInterval(meanVal, stdDev, 31, 0.95)
+	log.Println(min_ci, max_ci)
+
+	// Debit computation
+	var s string = longString()
+	start := time.Now()
+	_, err = c.Pong(ctx, &pb.PingRequest{Message: s})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	duration := time.Since(start)
+	log.Println("duration :", duration)
+	t := int64(duration)
+	log.Println("duration t:", t)
+	size := float64(len(s))
+	log.Println("size :", size)
+	min_bw, max_bw := size / float64(t - 2*int64(min_ci)), size / float64(t - 2*int64(max_ci))
+	log.Printf("bandwidth (%v, %v) bytes/second ", min_bw * math.Pow(10, 9), max_bw * math.Pow(10, 9))
 
 }

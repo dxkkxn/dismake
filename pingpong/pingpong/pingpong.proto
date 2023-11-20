@@ -29,9 +29,9 @@ service PingPong {
 
 // The request message containing the user's name.
 message PingRequest {
+  string message = 1;
 }
 
 // The response message containing the greetings
 message PongResponse {
-  string message = 1;
 }

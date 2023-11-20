@@ -20,9 +20,11 @@ type server struct {
 }
 
 func (s *server) Pong(ctx context.Context, in *pb.PingRequest) (*pb.PongResponse, error) {
-	log.Println("[server] received ping")
-	log.Println("[server] sending pong")
-	return &pb.PongResponse{Message: "Hello client" }, nil
+	// log.Println("[server] received ping")
+	// log.Println("[server] sending pong")
+	// log.Printf("[server] %v\n", in.GetMessage())
+
+	return &pb.PongResponse{}, nil
 }
 
 func main() {
