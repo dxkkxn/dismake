@@ -7,5 +7,5 @@ PINGPONG_DIR=~/ensimag-parmake/pingpong
 SITE=grenoble
 
 # copy files and connect
-scp -i $SSHKEY -r $PINGPONG_DIR $USER@access.grid5000.fr:$SITE/
+scp -i $SSHKEY -r $PINGPONG_DIR alloc.sh install_go.sh deploy.sh $USER@access.grid5000.fr:$SITE/
 ssh -i $SSHKEY $USER@access.grid5000.fr
