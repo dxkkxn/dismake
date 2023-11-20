@@ -21,6 +21,10 @@ First of all change in copyToG5k.sh your login and ssh private key
 ```
 ./copyToG5k.sh
 ./alloc.sh
-./deploy.sh
+./deploy.sh # this should deploy the servers in all avaible nodes
+# to launch the client
+cd pingpong
+/usr/local/go/bin/go run client/main.go -server ${YOUR_SEVER_ADDR}
+
 ```
 
