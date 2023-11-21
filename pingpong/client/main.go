@@ -49,7 +49,7 @@ func mean(values [32]int64) float64 {
 	for i := 1; i < 32; i++ {
 		sum += float64(values[i])
 	}
-	return sum / 32
+	return sum / 31
 }
 
 func standardDeviation(values [32]int64, mean float64) float64 {
@@ -156,8 +156,8 @@ func main() {
 	}
 
 	// Confidence interval computation
-	stdDev := standardDeviation(values, meanVal)
-	min_ci, max_ci := confidenceInterval(meanVal, stdDev, 31, 0.95)
+	stdDev := standardDeviation(values, meanVal/2)
+	min_ci, max_ci := confidenceInterval(meanVal/2, stdDev, 31, 0.95)
 	log.Println("Confidence interval:", min_ci, max_ci)
 
 	// Debit computation
