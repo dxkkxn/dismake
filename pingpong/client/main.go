@@ -75,8 +75,8 @@ func longString() string {
 func main() {
 	var server string;
 	flag.StringVar(&server, "server", "localhost", "Specify the server")
-	addr := flag.String("addr", server+":50051", "the address to connect to")
 	flag.Parse()
+	addr := flag.String("addr", server+":50051", "the address to connect to")
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -121,5 +121,4 @@ func main() {
 	log.Println("size :", size)
 	min_bw, max_bw := size / float64(t - 2*int64(min_ci)), size / float64(t - 2*int64(max_ci))
 	log.Printf("bandwidth (%v, %v) bytes/second ", min_bw * math.Pow(10, 9), max_bw * math.Pow(10, 9))
-
 }
