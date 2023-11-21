@@ -1,16 +1,24 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
+	"log"
 	"os"
-	"regexp"
 	"os/exec"
+	"regexp"
+	"time"
+
+	pb "dismake/proto"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func check(e error) {
 	if e != nil {
-		fmt.Println(e);
-		panic("panicking");
+		fmt.Println(e)
+		panic("panicking")
 	}
 }
 
@@ -28,16 +36,29 @@ func main() {
 	interpreter.evaluationFailed = false
 
 	yyParse(&interpreter)
-	rulesMap := make(map[string]rule);
-	for _, rule := range(allRules){
+	rulesMap := make(map[string]rule)
+	for _, rule := range allRules {
 		rulesMap[rule.target] = rule
 	}
-	mainTarget := allRules[len(allRules) - 1].target
-	execMakeSeq(mainTarget, rulesMap)
+	mainTarget := allRules[len(allRules)-1].target
+	// execMakeSeq(mainTarget, rulesMap)
+
+	var server string
+	flag.StringVar(&server, "server", "localhost", "Specify the server")
+	flag.Parse()
+	addr := flag.String("addr", server+":50051", "the address to connect to")
+	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	execMakeDistrib(mainTarget, rulesMap, conn)
+	// Set up a connection to the server.
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
 }
 
 func execMakeSeq(target string, graph map[string]rule) {
-	for _, req := range(graph[target].requisites) {
+	for _, req := range graph[target].requisites {
 		execMakeSeq(req, graph)
 	}
 	cmd := exec.Command("bash", "-c", graph[target].cmd)
@@ -49,6 +70,18 @@ func execMakeSeq(target string, graph map[string]rule) {
 	}
 }
 
+func execMakeDistrib(target string, graph map[string]rule, conn *grpc.ClientConn) {
+	for _, req := range graph[target].requisites {
+		execMakeDistrib(req, graph, conn)
+	}
+	c := pb.NewCommandRemoteExecClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	_, err := c.CmdRemoteExec(ctx, &pb.CmdRequest{Cmd: graph[target].cmd})
+	if err != nil {
+		log.Fatalf("could not execute function: %v", err)
+	}
+}
 
 const EOF = 0
 
@@ -105,7 +138,7 @@ func (l *interpreter) Lex(lval *yySymType) int {
 	}
 
 	// try to match files except when last token is '\t'
-	var targetToken = tokens[0];
+	var targetToken = tokens[0]
 	if last_returned_value == '\t' {
 		targetToken = tokens[1]
 	}
@@ -120,7 +153,7 @@ func (l *interpreter) Lex(lval *yySymType) int {
 	// Otherwise return the next letter.
 
 	ret := int(l.input[0])
-	last_returned_value = rune(l.input[0]);
+	last_returned_value = rune(l.input[0])
 	// fmt.Printf("ret: %v %v", ret, '\n')
 
 	l.input = l.input[1:]

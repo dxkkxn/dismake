@@ -1,0 +1,5 @@
+
+xd.txt: xd2.txt
+	touch xd.txt
+xd2.txt:
+	touch xd2.txt
