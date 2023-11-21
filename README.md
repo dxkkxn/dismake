@@ -13,6 +13,11 @@ go run server/main.go
 cd pingpong
 go run client/main.go
 
+# ou
+Pour faire le histogramme:
+cd pingpong
+go run client/main.go 2>&1 | python metrics.py
+
 ```
 
 # Deploy in g5k
