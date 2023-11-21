@@ -10,8 +10,8 @@ def parse_log(line):
     if match:
         valor = match.group(1)
         valor = float(match.group(1)[:-1]) * (
-            valor.endswith("m") * 1 +
-            valor.endswith("µ") * 10**-3)
+            valor.endswith("m") * 1000 +
+            valor.endswith("µ") * 1)
         return valor
     return None
 
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     plt.hist(times_elapsed[1:-2], bins=10, edgecolor='black')  # Adjust the number of bins as needed
 
     # Add labels and title
-    plt.xlabel('Time (ms)')
+    plt.xlabel('Time (us)')
     plt.ylabel('Frequency')
     plt.title('Histogram of Sample Data')
 
