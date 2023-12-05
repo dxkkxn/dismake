@@ -1,5 +1,5 @@
 
 xd.txt: xd2.txt
-	touch xd.txt
+	cat xd2.txt > xd.txt
 xd2.txt:
-	touch xd2.txt
+	echo "HELLO WORLD" > xd2.txt
