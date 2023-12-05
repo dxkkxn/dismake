@@ -21,8 +21,8 @@ type server struct {
 }
 
 func (s *server) CmdRemoteExec(ctx context.Context, in *pb.CmdRequest) (*pb.CmdResponse, error) {
-	log.Printf("[server] received: %v\n", in.GetCmd())
-	log.Printf("[server] excuting command %v", in.GetCmd())
+	log.Printf("received: %v\n", in.GetCmd())
+	log.Printf("excuting command %v", in.GetCmd())
 	cmd := exec.Command("bash", "-c", in.GetCmd())
 	stdout, err := cmd.Output()
 	var res string;
@@ -36,13 +36,14 @@ func (s *server) CmdRemoteExec(ctx context.Context, in *pb.CmdRequest) (*pb.CmdR
 
 func main() {
 	flag.Parse()
+	log.SetPrefix("[server] ")
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterCommandRemoteExecServer(s, &server{})
-	log.Printf("[server] listening at %v", lis.Addr())
+	log.Printf(" listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
