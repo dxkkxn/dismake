@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
+	"sync"
 	"regexp"
 	"time"
+	"strings"
 
 	pb "dismake/proto"
 	"google.golang.org/grpc"
@@ -22,11 +23,29 @@ func check(e error) {
 	}
 }
 
+type remoteConn struct {
+	conn *grpc.ClientConn
+	used bool
+	serverName string
+}
+
 func main() {
-	if len(os.Args) != 2 {
-		panic("only one argument pls :(")
+	log.SetPrefix("[client] ")
+	log.SetFlags(0)
+
+	var serversStr string
+	flag.StringVar(&serversStr, "server", "localhost:50051", "Specify the servers as \"server1 server2 server3\" ")
+	flag.Parse()
+
+	servers := strings.Split(serversStr, " ")
+
+	log.Printf("provided servers: %v\n", servers)
+
+	if len(flag.Args()) != 1 {
+		panic("one argument pls :(")
 	}
-	var file string = os.Args[1]
+
+	var file string = flag.Args()[0]
 	body, err := os.ReadFile(file)
 	check(err)
 
@@ -41,45 +60,70 @@ func main() {
 		rulesMap[rule.target] = rule
 	}
 	mainTarget := allRules[len(allRules)-1].target
-	// execMakeSeq(mainTarget, rulesMap)
 
-	var server string
-	flag.StringVar(&server, "server", "localhost", "Specify the server")
-	flag.Parse()
-	addr := flag.String("addr", server+":50051", "the address to connect to")
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	execMakeDistrib(mainTarget, rulesMap, conn)
-	// Set up a connection to the server.
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+	connections := make([]remoteConn, len(servers));
+	for i, server := range servers {
+		log.Println(server)
+		// Set up a connection to the server.
+		conn, err := grpc.Dial(server, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Fatalf("did not connect: %v", err)
+		}
+		defer conn.Close()
+		connections[i] = remoteConn{ conn, false, server }
 	}
-	defer conn.Close()
+	mech := syncMech{sync.WaitGroup{}, make(chan message, len(servers))}
+	available := len(servers)
+	execMakeDistrib(mainTarget, rulesMap, &connections, &mech, &available)
+	wg.Wait()
 }
 
-func execMakeSeq(target string, graph map[string]rule) {
-	for _, req := range graph[target].requisites {
-		execMakeSeq(req, graph)
-	}
-	cmd := exec.Command("bash", "-c", graph[target].cmd)
-	stdout, err := cmd.Output()
-	check(err)
-	fmt.Println(graph[target].cmd)
-	if len(stdout) != 0 {
-		fmt.Println(stdout)
-	}
+var wg sync.WaitGroup;
+type syncMech struct {
+	wg sync.WaitGroup
+	done chan message
+
 }
 
-func execMakeDistrib(target string, graph map[string]rule, conn *grpc.ClientConn) {
-	for _, req := range graph[target].requisites {
-		execMakeDistrib(req, graph, conn)
-	}
+
+func execCmd(serverNum int, conn *grpc.ClientConn, cmd string, mech *syncMech) {
+	log.Printf("sending command: %v", cmd)
 	c := pb.NewCommandRemoteExecClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	_, err := c.CmdRemoteExec(ctx, &pb.CmdRequest{Cmd: graph[target].cmd})
+	_, err := c.CmdRemoteExec(ctx, &pb.CmdRequest{Cmd: cmd})
 	if err != nil {
-		log.Fatalf("could not execute function: %v", err)
+		log.Printf("could not execute function: %v", err)
+	}
+	log.Printf("execution finished for command: %v", cmd)
+	// mech.done <- message{serverNum, 0};
+}
+
+
+func execMakeDistrib(target string, graph map[string]rule, connections *[]remoteConn, mech *syncMech, available *int) {
+	for _, req := range graph[target].requisites {
+		execMakeDistrib(req, graph, connections, mech, available)
+	}
+	if *available <= 0 {
+		m := <-mech.done
+		// available++
+		(*connections)[m.serverNum].used = false
+	}
+
+	for i, _:= range *connections {
+		remote := &((*connections)[i])
+		if (*remote).used == false {
+			(*remote).used = true
+			*available--
+			log.Printf("executing function at server: %v", (*connections)[i].serverName)
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				i := i
+				execCmd(i, remote.conn, graph[target].cmd, mech)
+			}()
+			break;
+		}
 	}
 }
 
@@ -88,6 +132,11 @@ const EOF = 0
 type interpreter struct {
 	input            string
 	evaluationFailed bool
+}
+
+type message struct {
+	serverNum int
+	status int
 }
 
 func (i *interpreter) Error(e string) {
@@ -106,7 +155,7 @@ var tokens = []tokenDef{
 		token: FILE,
 	},
 	{
-		regex: regexp.MustCompile(`[a-zA-z0-9\.\<\>\ ]*`),
+		regex: regexp.MustCompile(`[a-zA-z0-9\.\<\>\ "]*`),
 		token: CMD,
 	},
 }
@@ -154,7 +203,6 @@ func (l *interpreter) Lex(lval *yySymType) int {
 
 	ret := int(l.input[0])
 	last_returned_value = rune(l.input[0])
-	// fmt.Printf("ret: %v %v", ret, '\n')
 
 	l.input = l.input[1:]
 	return ret
