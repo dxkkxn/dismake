@@ -1,0 +1,5 @@
+
+xd.txt: xd2.txt
+	cat xd2.txt > xd.txt
+xd2.txt:
+	echo "HELLO WORLD" > xd2.txt
