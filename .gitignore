@@ -73,3 +73,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# matrix test
+a-*
+b-*
+c-*
+p-*
