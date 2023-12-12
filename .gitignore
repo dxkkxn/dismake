@@ -79,3 +79,6 @@ a-*
 b-*
 c-*
 p-*
+makefiles/matrix/a
+makefiles/matrix/b
+makefiles/matrix/c
