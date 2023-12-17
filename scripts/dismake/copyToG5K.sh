@@ -3,10 +3,12 @@ set -xe
 
 USER=ybenjellounelkbibi
 SSHKEY=~/.ssh/g5k
-DISMAKE_DIR=~/ensimag-dismake/dismake
-SCRIPTS_DIR=~/ensimag-dismake/scripts
 SITE=lyon
 
+DISMAKE_DIR=~/ensimag-dismake/dismake
+SCRIPTS_DIR=~/ensimag-dismake/scripts
+MAKEFILES_DIR=~/ensimag-dismake/makefiles
+
 # copy files and connect
-scp -i $SSHKEY -r $DISMAKE_DIR $SCRIPTS_DIR run_app.sh $USER@access.grid5000.fr:$SITE/
+scp -i $SSHKEY -r $DISMAKE_DIR $SCRIPTS_DIR $MAKEFILES_DIR run_app.sh $USER@access.grid5000.fr:$SITE/
 ssh -i $SSHKEY $USER@access.grid5000.fr
