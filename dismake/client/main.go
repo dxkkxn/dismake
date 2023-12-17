@@ -86,7 +86,7 @@ type syncMech struct {
 }
 
 
-func execCmd(serverNum int, conn *grpc.ClientConn, cmd string, mech *syncMech) {
+func execCmd(serverNum int, conn *grpc.ClientConn, cmd string, done chan<-message) {
 	log.Printf("sending command: %v", cmd)
 	c := pb.NewCommandRemoteExecClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -96,7 +96,7 @@ func execCmd(serverNum int, conn *grpc.ClientConn, cmd string, mech *syncMech) {
 		log.Printf("could not execute function: %v", err)
 	}
 	log.Printf("execution finished for command: %v", cmd)
-	// mech.done <- message{serverNum, 0};
+	done <- message{serverNum, 0};
 }
 
 
@@ -120,7 +120,7 @@ func execMakeDistrib(target string, graph map[string]rule, connections *[]remote
 			go func() {
 				defer wg.Done()
 				i := i
-				execCmd(i, remote.conn, graph[target].cmd, mech)
+				execCmd(i, remote.conn, graph[target].cmd, mech.done)
 			}()
 			break;
 		}
