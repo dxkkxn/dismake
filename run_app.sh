@@ -20,5 +20,6 @@ done
 
 sleep 10 # wait for the servers to run
 export PATH=$PATH:~/go/bin;
-go build -C dismake/client
-./dismake/client/client -server "$servers" $1
+go install -C ~/dismake/client modernc.org/goyacc
+make -C ~/dismake/client
+~/dismake/client/client -server "$servers" $1

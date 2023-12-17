@@ -30,6 +30,17 @@ ssh $SITE # site specified in copyToG5k
 ./scripts/alloc.sh
 ./run_app.sh your_simple_makefile
 # this should deploy the servers in all available nodes and launch the application
-
 ```
 
+
+# Launch tests application in g5k
+First of all change in copyToG5k.sh your login and ssh private key
+
+```
+./scripts/dismake/copyToG5k.sh
+ssh $SITE # site specified in copyToG5k
+./scripts/install_go.sh
+./scripts/alloc.sh
+cd makefiles
+make your_test # currently only premier tested (2 nodes)
+```

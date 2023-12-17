@@ -155,14 +155,14 @@ var tokens = []tokenDef{
 		token: FILE,
 	},
 	{
-		regex: regexp.MustCompile(`[a-zA-z0-9\.\<\>\ "]*`),
+		regex: regexp.MustCompile(`[a-zA-z0-9;\-\|\/\*\.\<\>\ "]*`),
 		token: CMD,
 	},
 }
 
 var cleaner = regexp.MustCompile(`(#.*\n)*|^\n$`) // checks for comments and empty lines
 
-var last_returned_value = rune(0)
+var last_returned_value [2]rune;
 
 func (l *interpreter) Lex(lval *yySymType) int {
 	finished := false
@@ -188,7 +188,7 @@ func (l *interpreter) Lex(lval *yySymType) int {
 
 	// try to match files except when last token is '\t'
 	var targetToken = tokens[0]
-	if last_returned_value == '\t' {
+	if last_returned_value[0] == '\n' && last_returned_value[1] == '\t' {
 		targetToken = tokens[1]
 	}
 	str := targetToken.regex.FindString(l.input)
@@ -202,7 +202,8 @@ func (l *interpreter) Lex(lval *yySymType) int {
 	// Otherwise return the next letter.
 
 	ret := int(l.input[0])
-	last_returned_value = rune(l.input[0])
+	last_returned_value[0] = last_returned_value[1]
+	last_returned_value[1] = rune(l.input[0])
 
 	l.input = l.input[1:]
 	return ret

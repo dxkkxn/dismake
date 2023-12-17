@@ -46,6 +46,12 @@ target:
               requisites: $3,
             }
         }
+        | FILE ':' '\t' files '\n' {
+            $$ = rule{
+              target: $1,
+              requisites: $4,
+            }
+        }
         ;
 cmd: '\t' CMD '\n' {$$ = $2}
 

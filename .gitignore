@@ -74,6 +74,14 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# goyacc
+y.output
+y.go
+
+# premier test
+list*
+*premier
+
 # matrix test
 a-*
 b-*
