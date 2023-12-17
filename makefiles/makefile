@@ -1,25 +1,22 @@
 CC=gcc
 MAKE=make
-BIN=bin
 
 MATRIX_SIZE ?= 4
 
 
-all: mkdir_bin matrix_test
+all: premier_test
 
 
 ###### test makefiles/premier ######
-mkdir_bin:
-	if [ ! -d $(BIN) ]; then \
-        mkdir $(BIN); \
-        echo "$(BIN) created."; \
-    fi
-
 premier_test:premier/premier.c
-	$(CC) $< -o $(BIN)/premier -lm
-	chmod +x $(BIN)/premier
-	PATH=${PATH}:./$(BIN)
-	$(MAKE) -f premier/Makefile-small
+	$(CC) $< -o premier/premier -lm
+	chmod +x premier/premier
+	$(MAKE) --directory=premier -f Makefile-small
+
+premier_test_long:premier/premier.c
+	$(CC) $< -o premier/premier -lm
+	chmod +x premier/premier
+	$(MAKE) --directory=premier -f Makefile
 
 
 ####### test makefiles/matrix ######
@@ -32,7 +29,7 @@ matrix_test:matrix/
 
 ############## clean ###############
 clean:
-	rm -f list*.txt 
-	rm -rf $(BIN)
+	rm -f premier/list*.txt 
+	rm -rf premier/premier
 	$(MAKE) clean --directory=/Users/huth/Documents/ENSIMAG/ISI/distrib-make/makefiles/matrix
 .PHONY: clean
