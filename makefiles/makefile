@@ -21,8 +21,12 @@ premier: premier/premier.c
 	../run_app.sh premier/Makefile-small
 
 matrix:
-	cp matrix/multiply $(SERVER_PATH)/multiply
+	cp matrix/* $(SERVER_PATH)
 	../run_app.sh multiply/Makefile
+
+blender:
+	cp blender_2.59/*.blend $(SERVER_PATH)
+	../run_app.sh blender_2.59/Makefile
 
 
 # clean:
