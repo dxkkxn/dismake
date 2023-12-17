@@ -28,8 +28,8 @@ premier: premier/premier.c
 # 	./matrix/generate_makefile.pl $(MATRIX_SIZE) > ./matrix/Makefile
 # 	$(MAKE) --directory=/Users/huth/Documents/ENSIMAG/ISI/distrib-make/makefiles/matrix
 
-############## clean ###############
-# clean:
-# 	rm -f list*.txt
-# 	rm -rf $(BIN)
+############# clean ###############
+clean:
+	rm -f premier/list*.txt 
+	rm -rf $(BIN)
 # .PHONY: clean
