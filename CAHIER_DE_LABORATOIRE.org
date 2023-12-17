@@ -16,6 +16,10 @@
 ** URL du gitlab de l'équipe
 https://gitlab.ensimag.fr/benjelly/distrib-make
 
-* Déployement dans Grid 5000
+* Déploiement dans Grid 5000
 * Expérimentations
 * Fabrication des courbes de performances
+Les courbes de performances sont tracées en utilisant la bibliothèque matplotlib de python. On lance le serveur go et puis on lance le client qui fera des ping-pong, et écrit sur la sortie standard les temps d'aller-retour mesurés, le débit calculé, la taille des message envoyés... Le programme metrics.py lit cette sortie et la parse afin de tirer les différentes données, et puis génère 3 graphiques différents : Le temps d'aller-retour en fonction de la taille des messages, le débit en fonction de la taille, et un histogramme représentant la distribution des temps d'aller-retour. Pour lancer ces mesure il suffit donc de lancer la commande : 
+#+BEGIN_SRC sh
+go run client/main.go 2>&1 | python3 metrics.py
+#+END_SRC
