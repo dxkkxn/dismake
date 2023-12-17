@@ -36,6 +36,10 @@ expr :
           allRules = append(allRules, $1)
           $$ = allRules
         }
+    | target expr {
+          allRules = append(allRules, $1)
+          $$ = allRules
+        }
      | empty_lines expr { $$ = allRules}
      | /* empty */ { $$ = allRules };
 

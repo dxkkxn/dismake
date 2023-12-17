@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"os/exec"
+	"bufio"
 
 	"google.golang.org/grpc"
 	pb "dismake/proto"
@@ -23,13 +24,19 @@ type server struct {
 func (s *server) CmdRemoteExec(ctx context.Context, in *pb.CmdRequest) (*pb.CmdResponse, error) {
 	log.Printf("received: %v\n", in.GetCmd())
 	log.Printf("excuting command %v", in.GetCmd())
+
 	cmd := exec.Command("bash", "-c", in.GetCmd())
-	stdout, err := cmd.Output()
+	stderr, _ := cmd.StderrPipe()
 	var res string;
-	if err != nil {
-		res = fmt.Sprintf("ERROR: %v", err)
-	} else {
-		res = string(stdout)
+	if err := cmd.Start(); err != nil {
+		log.Fatal("ERROR: %v", err)
+	}
+	scanner := bufio.NewScanner(stderr)
+	for scanner.Scan() {
+		error := scanner.Text()
+		if error != "" {
+			log.Fatal("CMD ERROR: %v", error)
+		}
 	}
 	return &pb.CmdResponse{Res: res}, nil
 }

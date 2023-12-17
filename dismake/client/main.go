@@ -151,11 +151,11 @@ type tokenDef struct {
 
 var tokens = []tokenDef{
 	{
-		regex: regexp.MustCompile(`[a-zA-Z0-9\.]*`),
+		regex: regexp.MustCompile(`[a-zA-Z0-9\.\-\_]*`),
 		token: FILE,
 	},
 	{
-		regex: regexp.MustCompile(`[a-zA-z0-9;\-\|\/\*\.\<\>\ "]*`),
+		regex: regexp.MustCompile(`[a-zA-z0-9;\%\_\-\|\/\*\.\<\>\ "]*`),
 		token: CMD,
 	},
 }

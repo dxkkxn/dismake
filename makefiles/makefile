@@ -20,13 +20,14 @@ premier: premier/premier.c
 	mv premier.exe $(SERVER_PATH)/premier
 	../run_app.sh premier/Makefile-small
 
-####### test makefiles/matrix ######
+matrix:
+	cp matrix/* $(SERVER_PATH)
+	../run_app.sh multiply/Makefile
 
-# matrix_test:matrix/
-# 	./matrix/random_matrix.pl $(MATRIX_SIZE) $(MATRIX_SIZE) > ./matrix/a
-# 	./matrix/random_matrix.pl $(MATRIX_SIZE) $(MATRIX_SIZE) > ./matrix/b
-# 	./matrix/generate_makefile.pl $(MATRIX_SIZE) > ./matrix/Makefile
-# 	$(MAKE) --directory=/Users/huth/Documents/ENSIMAG/ISI/distrib-make/makefiles/matrix
+blender:
+	cp blender_2.59/*.blend $(SERVER_PATH)
+	../run_app.sh blender_2.59/Makefile
+
 
 ############# clean ###############
 clean:
