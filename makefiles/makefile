@@ -18,15 +18,15 @@ premier: premier/premier.c
 	$(CC) $< -o premier.exe -lm
 	chmod +x premier.exe
 	mv premier.exe $(SERVER_PATH)/premier
-	../run_app.sh premier/Makefile-small
+	../make.sh premier/Makefile-small
 
 matrix:
 	cp matrix/* $(SERVER_PATH)
-	../run_app.sh multiply/Makefile
+	../make.sh multiply/Makefile
 
 blender:
 	cp blender_2.59/*.blend $(SERVER_PATH)
-	../run_app.sh blender_2.59/Makefile
+	../make.sh blender_2.59/Makefile
 
 
 # clean:
