@@ -18,6 +18,33 @@ https://gitlab.ensimag.fr/benjelly/distrib-make
 
 * Déploiement dans Grid 5000
 * Expérimentations
+** PREMIER TEST
+Trois tests ont été effectués avec le Makefile distrib-make/scripts/tests_bench/premier_time_operations/ et ensuite une moyenne a été calculée pour obtenir les temps moyens d'exécution. La machine taurus à Lyon a été utilisée avec le commit 8e1a189507dac7c4003e24ecfca391b27c873212.
+11,37	11,37	11,37
+19,02	19,03	19,04
+23,69	23,7	23,7
+27,39	27,39	27,42
+30,53	30,53	30,56
+33,3	33,26	33,28
+35,82	35,82	35,8
+38,1	38,09	38,08
+40,19	40,19	40,25
+42,2	42,2	42,24
+44,09	44,07	44,08
+45,78	45,8	45,78
+47,54	47,52	47,51
+49,16	49,18	49,13
+50,77	50,7	50,76
+52,21	52,22	52,22
+53,69	53,71	53,71
+55,09	55,15	55,08
+56,39	56,39	56,42
+57,65	57,66	57,69
+La moyenne de chaque exécution list<i>.txt est:
+11,37; 19,03; 23,70; 27,40; 30,54; 33,28; 35,81; 38,09; 40,21; 42,21; 44,08; 45,79; 47,52; 49,16; 50,74; 52,22; 53,70; 55,11; 56,40; 57,67
+De la même manière, trois autres tests de ce programme ont été effectués et le temps total a été mesuré :
+814,33; 814,16; 814,19
+
 * Fabrication des courbes de performances
 Les courbes de performances sont tracées en utilisant la bibliothèque matplotlib de python. On lance le serveur go et puis on lance le client qui fera des ping-pong, et écrit sur la sortie standard les temps d'aller-retour mesurés, le débit calculé, la taille des message envoyés... Le programme metrics.py lit cette sortie et la parse afin de tirer les différentes données, et puis génère 3 graphiques différents : Le temps d'aller-retour en fonction de la taille des messages, le débit en fonction de la taille, et un histogramme représentant la distribution des temps d'aller-retour. Pour lancer ces mesure il suffit donc de lancer la commande : 
 #+BEGIN_SRC sh
