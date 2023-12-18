@@ -48,6 +48,16 @@ Pour lancer les tests
 
 ** TESTS PINGPONG
 Avant de tester le make distribué, nous avons commencé par tester l'infrastructure en utilsant Go et grpc, ceci a été réalisé avec le code du commit 48ef0e37c1fdb69182a7cc1f3a77fc2579ec34ed.
+Les résultats dépendent des machines où est lancé le pingpong, et il suffit de se placer dans le répertoire pingpong, et de lancer sur une machine :
+#+BEGIN_SRC sh
+go run server/main.go
+#+END_SRC
+Et sur une autre machine :
+#+BEGIN_SRC sh
+go run client/main.go
+#+END_SRC
+
+Le programme client/main.go va écrire sur la sortie standard les métriques mesurées (latency, bandwidth...)
 
 ** PREMIER TEST
 Trois tests ont été effectués avec le Makefile distrib-make/scripts/tests_bench/premier_time_operations/ et ensuite une moyenne a été calculée pour obtenir les temps moyens d'exécution. La machine taurus à Lyon a été utilisée avec le commit 8e1a189507dac7c4003e24ecfca391b27c873212.
