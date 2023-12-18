@@ -155,7 +155,7 @@ var tokens = []tokenDef{
 		token: FILE,
 	},
 	{
-		regex: regexp.MustCompile(`[a-zA-z0-9;\%\_\-\|\/\*\.\<\>\ "]*`),
+		regex: regexp.MustCompile(`[a-zA-z0-9;\#\%\_\-\|\/\*\.\<\>\ "]*`),
 		token: CMD,
 	},
 }
