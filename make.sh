@@ -18,6 +18,6 @@ for host in $(uniq $OAR_NODEFILE); do
     fi
 done
 
-sleep 10 # wait for the servers to run
+sleep 5 # wait for the servers to run
 export PATH=$PATH:~/go/bin;
 ~/dismake/client/client -server "$servers" $1
