@@ -15,7 +15,7 @@ premier:
 	$(CC) premier/premier.c -o premier.exe -lm
 	chmod +x premier.exe
 	mv premier.exe $(SERVER_PATH)/premier
-	../make.sh premier/Makefile-small
+	../make.sh premier/Makefile
 
 matrix:
 	cp matrix/* $(SERVER_PATH)
