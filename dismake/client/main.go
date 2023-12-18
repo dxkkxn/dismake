@@ -75,8 +75,21 @@ func main() {
 	}
 	mech := syncMech{sync.WaitGroup{}, make(chan message, len(servers))}
 	available := len(servers)
+
+	start := time.Now()
+
 	execMakeDistrib(mainTarget, rulesMap, &connections, &mech, &available)
 	wg.Wait()
+	duration := time.Since(start)
+	f, err := os.OpenFile(file + "_benchmarks", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	if _, err = f.WriteString(fmt.Sprintf("%v, %v\n", available, duration)); err != nil {
+		panic(err)
+	}
 }
 
 var wg sync.WaitGroup;

@@ -20,4 +20,5 @@ done
 
 sleep 5 # wait for the servers to run
 export PATH=$PATH:~/go/bin;
+make -C ~/dismake/client
 ~/dismake/client/client -server "$servers" $1
