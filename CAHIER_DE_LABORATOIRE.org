@@ -70,6 +70,40 @@ De la même manière, trois autres tests de ce programme ont été effectués et
 ** NFS ASSESSMENT
 This test aimed at assessing how long did it take for writing operations to be performed with files up to 8MB.
 
+For this to work well one must have a "./results" folder in place. The "nfs-test.c" file must be already compiled, in the same folder, with the name "nfs-test". This can achieved by running:
+
+#+BEGIN_SRC sh
+gcc -o nfs-test nfs-test.c
+#+END_SRC
+
+Then one can execute the following:
+
+#+BEGIN_SRC sh
+python run-file-evaluation.py
+#+END_SRC
+
+The results are going to be grouped per block size and per file size inside "./results" in the following fashion: "block-size_file-size.csv". Each file contains 32 executions of the test to get a good enough (alpha=0.05 implies a sample of around 32 values) estimation in terms of latency for the whole writing operation to be completed. The execution can take a while, so set aside a few hours for it to finish.
+
+After the operations are done you can run:
+
+#+BEGIN_SRC sh
+/usr/sbin/nfsstat -m
+#+END_SRC
+
+Identify the mount point that contains the folder under which the test was performed (preferably the home folder) and then run:
+
+#+BEGIN_SRC sh
+/usr/sbin/nfsiostat
+#+END_SRC
+
+Now locate the mount point identified before, now you should be able to get some key info as such as the throughput in kB/s, the amount of read and write operations per second and some info regarding how long did it take on average for:
+- the NFS client to receive a reply (avg RPC (ms))
+- the entire RPC operation to complete (avg exe (ms))
+
+All those tests were executed in the "nantes" site.
+
+commit: d45258d4f6f45ed695c5d4660ba2fda3e212aa02
+
 ** MATRIX TEST
 Pour le test de matrice, j'ai effectué le même type de mesure que pour le PREMIER TEST afin de mesurer le temps de chaque sous-tâche, avec le commit de hash 0e741ad1700d4dcb181b9d47a6b27d2560266883. Les tests séquentiels ont été effectués sur ma machine (MacBook Air M1) le 18 décembre.
 
