@@ -24,3 +24,5 @@ matrix:
 blender:
 	cp blender_2.59/*.blend $(SERVER_PATH)
 	../make.sh blender_2.59/Makefile
+
+.PHONY: premier matrix blender
