@@ -67,40 +67,40 @@ La moyenne de chaque exécution list<i>.txt est:
 De la même manière, trois autres tests de ce programme ont été effectués et le temps total a été mesuré :
 814,33; 814,16; 814,19
 
-** NFS ASSESSMENT
-This test aimed at assessing how long did it take for writing operations to be performed with files up to 8MB.
+** EVALUATION NFS
+Ce test visait à évaluer le temps nécessaire pour effectuer les opérations d'écriture avec des fichiers allant jusqu'à 8 MB.
 
-For this to work well one must have a "./results" folder in place. The "nfs-test.c" file must be already compiled, in the same folder, with the name "nfs-test". This can achieved by running:
+Pour que cela fonctionne bien, il faut avoir un dossier "./results" en place. Le fichier "nfs-test.c" doit être déjà compilé, dans le même dossier, sous le nom "nfs-test". Ceci peut être réalisé en exécutant :
 
 #+BEGIN_SRC sh
 gcc -o nfs-test nfs-test.c
 #+END_SRC
 
-Then one can execute the following:
+On peut alors exécuter ce qui suit :
 
 #+BEGIN_SRC sh
 python run-file-evaluation.py
 #+END_SRC
 
-The results are going to be grouped per block size and per file size inside "./results" in the following fashion: "block-size_file-size.csv". Each file contains 32 executions of the test to get a good enough (alpha=0.05 implies a sample of around 32 values) estimation in terms of latency for the whole writing operation to be completed. The execution can take a while, so set aside a few hours for it to finish.
-
-After the operations are done you can run:
+Les résultats vont être regroupés par taille de bloc et par taille de fichier dans "./results" de la manière suivante : "block-size_file-size.csv". Chaque fichier contient 32 exécutions du test pour obtenir une estimation suffisamment bonne (alpha=0,05 implique un échantillon d'environ 32 valeurs) en termes de latence pour que toute l'opération d'écriture soit terminée. L’exécution peut prendre un certain temps, alors prévoyez quelques heures pour qu’elle se termine.
+ 
+Une fois les opérations terminées, vous pouvez exécuter :
 
 #+BEGIN_SRC sh
 /usr/sbin/nfsstat -m
 #+END_SRC
 
-Identify the mount point that contains the folder under which the test was performed (preferably the home folder) and then run:
+Identifiez le point de montage qui contient le dossier sous lequel le test a été effectué (de préférence le dossier de départ), puis exécutez :
 
 #+BEGIN_SRC sh
 /usr/sbin/nfsiostat
 #+END_SRC
 
-Now locate the mount point identified before, now you should be able to get some key info as such as the throughput in kB/s, the amount of read and write operations per second and some info regarding how long did it take on average for:
-- the NFS client to receive a reply (avg RPC (ms))
-- the entire RPC operation to complete (avg exe (ms))
+Localisez maintenant le point de montage identifié précédemment. Vous devriez maintenant pouvoir obtenir des informations clés telles que le débit en Ko/s, le nombre d'opérations de lecture et d'écriture par seconde et des informations sur le temps que cela a pris en moyenne :
+- le client NFS pour recevoir une réponse (moyenne RPC (ms))
+- toute l'opération RPC à terminer (moyenne exe (ms))
 
-All those tests were executed in the "nantes" site.
+Tous ces tests ont été exécutés sur le site de "nantes".
 
 commit: d45258d4f6f45ed695c5d4660ba2fda3e212aa02
 
