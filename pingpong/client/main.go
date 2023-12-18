@@ -98,7 +98,7 @@ func main() {
 	c := pb.NewPingPongClient(conn)
 
 	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
 	defer cancel()
 	var values [32]int64
 	for i := 0; i < 32; i++ {

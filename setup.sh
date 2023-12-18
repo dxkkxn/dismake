@@ -25,3 +25,10 @@ chmod u+x magick
 mv magick ~/blender-4.0.2-linux-x64
 echo $PATH > .path
 echo "PATH=$PATH" > .bashrc
+
+echo "Installing packages..."
+go install -C ~/dismake/client
+go install -C ~/dismake/server
+
+echo "Compiling client..."
+make -C ~/dismake/client

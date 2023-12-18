@@ -15,8 +15,17 @@
 * Gestion du code
 ** URL du gitlab de l'équipe
 https://gitlab.ensimag.fr/benjelly/distrib-make
-
 * Déploiement dans Grid 5000
+Modifiez le nom d'utilisateur et ajoutez le path de votre clef ssh
+#+BEGIN_SRC bash
+    ./copy_connect_g5k.sh # copie les dossier scipts dans un site donné
+    ssh $SITE # loggez vous sur le site specifié sur le script précedent
+    ./setup.sh
+    ./alloc.sh
+    cd makefiles
+    make YourTest  # (premier, matrix ou blender)
+#+END_SRC
+
 * Expérimentations
 ** PREMIER TEST
 Trois tests ont été effectués avec le Makefile distrib-make/scripts/tests_bench/premier_time_operations/ et ensuite une moyenne a été calculée pour obtenir les temps moyens d'exécution. La machine taurus à Lyon a été utilisée avec le commit 8e1a189507dac7c4003e24ecfca391b27c873212.

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"os/exec"
 	"bufio"
 
@@ -43,7 +44,13 @@ func (s *server) CmdRemoteExec(ctx context.Context, in *pb.CmdRequest) (*pb.CmdR
 
 func main() {
 	flag.Parse()
-	log.SetPrefix("[server] ")
+	hostname, err := os.Hostname()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+	}
+	// fmt.Printf("Hostname: %s", hostname)
+	log.SetPrefix("[server: " + hostname + "]")
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
