@@ -67,6 +67,9 @@ La moyenne de chaque exécution list<i>.txt est:
 De la même manière, trois autres tests de ce programme ont été effectués et le temps total a été mesuré :
 814,33; 814,16; 814,19
 
+** NFS ASSESSMENT
+This test aimed at assessing how long did it take for writing operations to be performed with files up to 8MB.
+
 ** MATRIX TEST
 Pour le test de matrice, j'ai effectué le même type de mesure que pour le PREMIER TEST afin de mesurer le temps de chaque sous-tâche, avec le commit de hash 0e741ad1700d4dcb181b9d47a6b27d2560266883. Les tests séquentiels ont été effectués sur ma machine (MacBook Air M1) le 18 décembre.
 
