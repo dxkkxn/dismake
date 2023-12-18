@@ -103,7 +103,7 @@ type syncMech struct {
 func execCmd(serverNum int, conn *grpc.ClientConn, target rule, done chan<-message) {
 	log.Printf("sending command: %v", target.cmd)
 	c := pb.NewCommandRemoteExecClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2 * time.Minute)
 	defer cancel()
 	_, err := c.CmdRemoteExec(ctx, &pb.CmdRequest{Cmd: target.cmd})
 	if err != nil {
