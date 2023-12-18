@@ -3,8 +3,8 @@ set -xe
 
 remote_exec="
 export PATH=$PATH:$(cat ~/.path);
-cd dismake;
-go run server/main.go
+cd dismake/server;
+go run main.go
 "
 servers=""
 for host in $(uniq $OAR_NODEFILE); do
@@ -20,5 +20,4 @@ done
 
 sleep 10 # wait for the servers to run
 export PATH=$PATH:~/go/bin;
-make -C ~/dismake/client
 ~/dismake/client/client -server "$servers" $1
