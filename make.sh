@@ -2,7 +2,7 @@
 set -xe
 
 remote_exec="
-export PATH=$PATH:~/go/bin;
+export PATH=$PATH:$(cat ~/.path);
 cd dismake;
 go run server/main.go
 "
@@ -20,6 +20,5 @@ done
 
 sleep 10 # wait for the servers to run
 export PATH=$PATH:~/go/bin;
-go install -C ~/dismake/client modernc.org/goyacc
 make -C ~/dismake/client
 ~/dismake/client/client -server "$servers" $1
