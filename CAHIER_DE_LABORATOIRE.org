@@ -112,3 +112,12 @@ Les courbes de performances sont tracées en utilisant la bibliothèque matplotl
 #+BEGIN_SRC sh
 go run client/main.go 2>&1 | python3 metrics.py
 #+END_SRC
+
+** DERNIÈRE TEST
+Ici on va lancer le make distribué pour premier et matrix (fournis) 3 fois chacun, en augmentant le nombre de worker nodes de 1 à 20. A chaque exécution on mesure le temps, et on le stocke dans un fichier avec le nombre de workers utilisés. Pour un nombre de noeuds donné on calcule les moyenne des temps mesurés, et on génère les courbes d'évolution du temps d'exécution en fonction du nombre de workers.
+
+#+BEGIN_SRC sh
+./benchmark.sh
+#+END_SRC
+
+commit: 201a7e50328194c19f579174e4485f51f2e2329f
