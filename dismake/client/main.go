@@ -56,6 +56,7 @@ func main() {
 
 	yyParse(&interpreter)
 	rulesMap := make(map[string]rule)
+	doneTarget = make(map[string]bool)
 	for _, rule := range allRules {
 		rulesMap[rule.target] = rule
 	}
@@ -86,43 +87,66 @@ type syncMech struct {
 }
 
 
-func execCmd(serverNum int, conn *grpc.ClientConn, cmd string, done chan<-message) {
-	log.Printf("sending command: %v", cmd)
+func execCmd(serverNum int, conn *grpc.ClientConn, target rule, done chan<-message) {
+	log.Printf("sending command: %v", target.cmd)
 	c := pb.NewCommandRemoteExecClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	_, err := c.CmdRemoteExec(ctx, &pb.CmdRequest{Cmd: cmd})
+	_, err := c.CmdRemoteExec(ctx, &pb.CmdRequest{Cmd: target.cmd})
 	if err != nil {
 		log.Printf("could not execute function: %v", err)
 	}
-	log.Printf("execution finished for command: %v", cmd)
-	done <- message{serverNum, 0};
+	log.Printf("execution finished for command: %v", target.cmd)
+	done <- message{serverNum, 0, target.target};
 }
 
+var doneTarget map[string]bool;
+
+func check_requisites(target string, graph map[string]rule) bool {
+	// checking if requisites of target execution finished
+	for _, req := range graph[target].requisites {
+		_, ok := graph[req]
+		if !ok {
+			// req is not actually a dependcy
+			continue
+		}
+		_, ok = doneTarget[req]
+		if !ok {
+			log.Printf("req %v not done yet", req)
+			return false
+		}
+		log.Printf("req %v done", req)
+	}
+	return true
+}
 
 func execMakeDistrib(target string, graph map[string]rule, connections *[]remoteConn, mech *syncMech, available *int) {
 	for _, req := range graph[target].requisites {
 		execMakeDistrib(req, graph, connections, mech, available)
 	}
-	if *available <= 0 {
+	for *available <= 0 || !check_requisites(target, graph) {
 		m := <-mech.done
-		// available++
+		*available++
 		(*connections)[m.serverNum].used = false
+		doneTarget[m.target] = true
 	}
-
-	for i, _:= range *connections {
-		remote := &((*connections)[i])
-		if (*remote).used == false {
-			(*remote).used = true
-			*available--
-			log.Printf("executing function at server: %v", (*connections)[i].serverName)
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				i := i
-				execCmd(i, remote.conn, graph[target].cmd, mech.done)
-			}()
-			break;
+	log.Printf("available servers: %v", *available)
+	// if cmd send cmd
+	if graph[target].cmd != "" && !doneTarget[target]{
+		for i, _:= range *connections {
+			remote := &((*connections)[i])
+			if (*remote).used == false {
+				(*remote).used = true
+				*available--
+				log.Printf("executing function at server: %v", (*connections)[i].serverName)
+				wg.Add(1)
+				go func() {
+					defer wg.Done()
+					i := i
+					execCmd(i, remote.conn, graph[target], mech.done)
+				}()
+				break;
+			}
 		}
 	}
 }
@@ -137,6 +161,7 @@ type interpreter struct {
 type message struct {
 	serverNum int
 	status int
+	target string
 }
 
 func (i *interpreter) Error(e string) {
