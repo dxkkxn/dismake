@@ -12,14 +12,14 @@ MATRIX_SIZE ?= 4
 SERVER_PATH=../dismake/server
 
 premier:
-	$(CC) $< -o premier.exe -lm
+	$(CC) premier/premier.c -o premier.exe -lm
 	chmod +x premier.exe
 	mv premier.exe $(SERVER_PATH)/premier
 	../make.sh premier/Makefile-small
 
 matrix:
 	cp matrix/* $(SERVER_PATH)
-	../make.sh multiply/Makefile
+	../make.sh matrix/Makefile
 
 blender:
 	cp blender_2.59/*.blend $(SERVER_PATH)
