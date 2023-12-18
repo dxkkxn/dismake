@@ -87,7 +87,7 @@ func main() {
 	}
 	defer f.Close()
 
-	if _, err = f.WriteString(fmt.Sprintf("%v, %v\n", available, duration)); err != nil {
+	if _, err = f.WriteString(fmt.Sprintf("%v, %v\n", len(servers), duration)); err != nil {
 		panic(err)
 	}
 }
